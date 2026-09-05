@@ -1,0 +1,17 @@
+import example.*
+
+describe "group JAZMIN" {
+
+  test "jazmin jode 23 veces el piano" {
+    23.times({n => jazmin.tocar()})
+
+    lucio.afinar(pianoFamiliar, 1)
+    
+    assert.equals(80, pianoFamiliar.afinacion())
+
+    // assert.that(pianoFamiliar.afinacion() > 80)
+
+    
+  }
+
+}
