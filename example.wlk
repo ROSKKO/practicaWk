@@ -827,3 +827,136 @@ object mensajeria{
 //     return empleados.last().peso()
 //   }
 // }
+
+
+/*
+-------------------- SPRINGFIELD ----------------------------------------  
+*/
+
+object centralNuclear {
+  const varillas = 200
+  method produccionEnergetica(){
+    return varillas * 0.1
+  }
+
+  method esContaminante(){
+    return true
+  }
+}
+
+object centralCarbon{
+  const toneladas = 1000
+  method produccionEnergetica(){
+    return 0.5 + toneladas * springfield.riquezaSuelo()
+  }
+  method esContaminante(){
+    return true
+  }
+}
+
+object centralEolica{
+
+  method produccionEnergetica(){
+    return 0.2 * springfield.vientos()
+  }
+  method esContaminante(){
+    return false
+  }
+}
+
+object springfield{
+  const centrales=[centralNuclear, centralCarbon, centralEolica]
+  var energia_requerida = 0
+
+  method riquezaSuelo(){
+    return 0.9
+  }
+
+  method vientos(){
+    return 10 // m/s
+  }
+
+  method centralesContaminantes(){
+    return centrales.filter({central => central.esContaminante()})
+  }
+
+  method necesidadEnergetica(energiaNecesaria){
+    energia_requerida = energiaNecesaria
+  }
+
+  method cubreNecesidad(){
+    return centrales.map({central => central.produccionEnergetica()}).sum() >= energia_requerida
+  }
+
+  method estaAlHorno(){
+    /*
+    esto ocurre cuando las centrales contaminantes aportan más del 50% de lo necesario, ó si todas las centrales son contaminantes.
+    */
+    return centrales.all({central => central.esContaminante()}) || centrales.filter({central => central.esContaminante()}).all({central => central.produccionEnergetica() > energia_requerida * 0.5})
+  }
+
+  method produccionEnergetica(){
+    return centrales.map({central => central.produccionEnergetica()}).sum()
+  }
+
+  method centralPrincipal(){
+    return centrales.find({
+      central => central.produccionEnergetica() == (
+        centrales.map({otraCentral => otraCentral.produccionEnergetica()}).max()
+      )
+    })
+  }
+}
+
+object centralHidroelectrica{
+  method produccionEnergetica(){
+    return 2000000 * albuquerque.caudal()
+  }
+}
+
+object albuquerque{
+  var centrales = [centralHidroelectrica]
+  method caudal(){
+    return 150 // l/s
+  }
+
+  method produccionEnergetica(){
+    return centralHidroelectrica.produccionEnergetica()
+  }
+
+  method centralPrincipal(){
+    return centrales.find({
+      central => central.produccionEnergetica() == (
+        centrales.map({otraCentral => otraCentral.produccionEnergetica()}).max()
+      )
+    })
+  }
+
+}
+
+object laRegion{
+  var ciudades = []
+
+  method agregarCiudad(ciudad){
+    ciudades.add(ciudad)
+  }
+
+  method principalCiudadProductora(){
+    return ciudades.find({
+      ciudad => ciudad.produccionEnergetica() == (
+        ciudades.map({otra_ciudad => otra_ciudad.produccionEnergetica()}).max()
+        )
+    })
+  }
+
+  method principalesCentrales(){
+    return ciudades.map({ciudad => ciudad.centralPrincipal()})
+  }
+}
+
+// SIN USAR
+object turbina{
+  method produccion(){
+    return 0.2 * springfield.vientos()
+  }
+}
