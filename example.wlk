@@ -1,11 +1,31 @@
+// object pepita {
+//   var energy = 100
+
+//   method energy() = energy
+
+//   method fly(minutes) {
+//     energy = energy - minutes * 3
+//   }
+// }
+
 object pepita {
-  var energy = 100
+  var property energia = 50
 
-  method energy() = energy
-
-  method fly(minutes) {
-    energy = energy - minutes * 3
+    method fly(minutes) {
+    energia = energia - minutes * 3
   }
+
+  method comerAlpiste(cantidad) {
+    energia += cantidad * 3
+  }
+
+  method volarEnCirculos() {
+    if (energia < 20) {
+      self.error("pepita no tiene suficiente energía para volar")      
+    }
+    energia -= 20
+  }
+
 }
 
 // Declará acá tus objetos...
@@ -954,9 +974,43 @@ object laRegion{
   }
 }
 
-// SIN USAR
-object turbina{
-  method produccion(){
-    return 0.2 * springfield.vientos()
+/*
+Para manejar errores - usar self.error(mensaje)
+
+
+
+object pepita {
+  var property energia = 50
+
+  method comerAlpiste(cantidad) {
+    energia += cantidad * 3
+  }
+
+  method volarEnCirculos() {
+    if (energia < 20) {
+      self.error("pepita no tiene suficiente energía para volar")      
+    }
+    energia -= 20
+  }
+
+}
+
+*/
+
+object carlos{
+  method estudiarPepita(){
+    pepita.comerAlpiste(10)
+    pepita.volarEnCirculos()
+    // if(pepita.energia() < 20){
+    //   self.error("Erro")
+    // }
+    /*
+    no hace falta incluir el if porque el self.error
+    de volarEnCirculos ya rompe con la ejecucion del
+    programa
+    */
+    pepita.volarEnCirculos()
+    pepita.comerAlpiste(10)
+
   }
 }
