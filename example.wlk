@@ -1014,3 +1014,134 @@ object carlos{
 
   }
 }
+
+// ZOMBIES
+object bouba{
+  var property salud = 100
+
+  method sabeCorrer(){
+    return false
+  }
+
+  method recibirDanio(danio){
+    self.salud( (self.salud() - (danio*2)).max(0) )
+  }
+
+  method vivo(){
+    return salud > 0
+  }
+}
+
+object kiki{
+  var property salud = 100
+
+  method sabeCorrer(){
+    return false
+  }
+
+  method recibirDanio(danio){
+    self.salud( (self.salud() - (danio*2)).max(0) )
+  }
+
+  method vivo(){
+    return salud > 0
+  }
+}
+
+/*
+Si varios objetos tienen el código parecido pero no puede ser generalizado para que sea el mismo, no nos sirve definir una clase. A lo sumo,
+ si tenemos algunos objetos con cierta definición y otros con una definición diferente, definimos dos clases. Al menos por ahora...
+
+const bouba = new Zombi()
+const kiki = new Zombi()
+
+
+*/
+
+
+class Zombi{
+  var property salud = 100
+
+  method sabeCorrer(){
+    return false
+  }
+
+  method recibirDanio(danio){
+    self.salud( (self.salud() - (danio*2)).max(0) )
+  }
+
+  method vivo(){
+    return salud > 0
+  }
+}
+// SOBREVIVIENTES
+
+/*
+object juliana{
+  var property energia = 100
+
+  method atacar(zombie){
+    zombie.recibirDanio( self.energia() * 0.1 )
+  }
+  
+}
+object anastasia{
+  var property energia = 100
+
+  method atacar(zombie){
+    zombie.recibirDanio( self.energia() * 0.1 )
+  }
+}
+*/
+object juliana{
+  var property energia = 100
+
+  method atacar(zombie){
+    zombie.recibirDanio( self.energia() * 0.1 )
+  }
+
+}
+object anastasia{
+  var property energia = 100
+
+  method atacar(zombie){
+    zombie.recibirDanio( self.energia() * 0.1 )
+  }
+}
+class Sobreviviente{
+  var property energia = 100
+
+  method atacar(zombie){
+    zombie.recibirDanio( self.energia() * 0.1 )
+  }
+
+  method ataqueMasivo(zombis){
+    zombis.forEach({zombi => self.atacar(zombi)})
+    self.energia( self.energia() - 50)
+  }
+}
+
+const juliana_s = new   Sobreviviente(energia = 100)
+const anastasia_s = new Sobreviviente(energia = 150)
+
+object invasion{
+  const property zombis = [ new Zombi() ]
+
+  method tamanio(){
+    return zombis.count({zombi => zombi.vivo() })
+  }
+
+  method incrementar(){
+    (self.vivos().size()).times({n => self.nuevo_zombi() })
+  }
+
+  // opcional
+  method nuevo_zombi(){
+    zombis.add(new Zombi())
+  }
+
+  method vivos(){
+    return self.zombis().filter({zombi => zombi.vivo()})
+  }
+}
+
