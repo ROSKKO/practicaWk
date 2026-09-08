@@ -1145,3 +1145,107 @@ object invasion{
   }
 }
 
+// HERENCIA
+
+// class MaestroAgua{
+//   var property habilidad = 200
+
+//   method esGroso(){
+//     return self.habilidad() > 5
+//   } 
+
+//   method poder(){
+//     return self.habilidad() * 100
+//   }
+// }
+
+// class MaestroFuego{
+//   var property habilidad = 200
+//   var property rabia = 0
+//   var property locura = 0
+
+//   method esGroso(){
+//     return self.habilidad() > 5
+//   }   
+
+//   method poder(){
+//     return self.rabia() / self.locura()
+//   }
+// }
+
+/*
+Para decir que una clase hereda de otra usamos la palabra clave inherits.
+ Por ejemplo, si queremos hacer una clase BisonteVolador que hereda de una clase Bisonte
+  se puede hacer de esta forma:
+*/
+
+class Bisonte {
+  var property peso = 0
+
+  method comer(){
+    self.peso( self.peso() + 2)
+  } 
+}
+
+class BisonteVolador inherits Bisonte {
+  method yipYip(){
+    self.peso( self.peso() - 1)
+  }
+}
+
+class Maestro{
+  var property habilidad = 200
+
+  method esGroso(){
+    return self.habilidad() > 5 && self.poder() > 1000
+  }
+
+  method poder()
+
+}
+
+
+class MaestroAgua inherits Maestro{
+  
+  override method poder(){
+    return self.habilidad() * 100
+  }
+
+  method esPeligroso(){
+    return self.poder() > 3000
+  }
+}
+
+class MaestroFuego inherits Maestro{
+  var property rabia = 0
+  var property locura = 0
+  override method poder(){
+    return self.rabia() / self.locura()
+  }
+}
+
+class MaestroSangre inherits MaestroAgua{
+  override method esPeligroso(){
+    return true
+  }
+
+  override method poder(){
+    return super() * 2 // al hacer super() hace referencia a la misma funcion que se esta haciendo override
+  }
+
+}
+
+class Mascota{
+  var property poder
+}
+
+const appa = new Mascota(poder = 150)
+const momo = new Mascota(poder = 15)
+
+object aang inherits Maestro(habilidad = 100){
+  var property mascota = appa
+  override method poder(){
+    return self.habilidad() * mascota.poder()
+  }
+
+}
