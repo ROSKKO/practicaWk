@@ -1249,3 +1249,243 @@ object aang inherits Maestro(habilidad = 100){
   }
 
 }
+
+// SPA
+
+object spa{
+  method atender(persona){
+    persona.recibirMasajes()
+    persona.darseUnBanioDeVapor()
+  }
+}
+
+object olivia{
+  
+  var property concentracion = 4
+  var masajes = 1 // para que el conteo empiece a partir de 1
+
+  method discutir(){
+
+    if(self.concentracion() < 5){
+      return
+    } else {
+      self.concentracion( 5 )
+    }
+
+  }
+
+  method gradoDeConcentracion(){
+    return concentracion
+  }
+
+  method esFeliz(){
+    return self.concentracion() >= 7
+  }
+
+  method recibirMasajes(){
+    // if(masajes < 3){
+    //   self.concentracion( self.concentracion() + 2 )
+    //   masajes += 1
+    // } else {
+    //   self.concentracion( self.concentracion() + 5 )
+    // }
+    if(masajes >= 3){
+      self.concentracion( self.concentracion() + 5)
+    } else {
+      self.concentracion( self.concentracion() + 2 )
+      masajes += 1
+    }
+  }
+
+  method darseUnBanioDeVapor(){
+    self.concentracion( self.concentracion() + 1 )
+  }
+}
+
+object adriano{
+  var property nivelDeContractura = 5
+  var property frescoParaProgramar = true
+
+  method recibirMasajes(){
+    self.nivelDeContractura( (self.nivelDeContractura() - 2).max(0) )
+  }
+
+  method darseUnBanioDeVapor(){
+    self.frescoParaProgramar(true)
+  }
+
+  method comerBigMac(){
+    self.frescoParaProgramar(true)
+  }
+
+  method codear(){
+    if(self.frescoParaProgramar()){
+      self.nivelDeContractura( self.nivelDeContractura() + 1 )
+    } else {
+      self.nivelDeContractura( self.nivelDeContractura() + 3 )
+    }
+    self.frescoParaProgramar(false)
+  }
+
+  method trabajarUnDia(){
+    self.codear()
+    self.comerBigMac()
+    self.codear()
+  }
+}
+
+
+// CARRITO DE COMPRAS
+
+object carrito{
+  var property productos = []  
+  method agregar(producto){
+    productos.add(producto)
+  }
+
+  method estaVacio(){
+    return productos.isEmpty()
+  }
+
+  method cantidadDeProductos(){
+    return productos.size()
+  }
+
+  method totalAAbonar(){
+    return productos.map({producto => producto.precioUnitario () }).sum()
+  }
+}
+
+class Producto{
+  var property precioUnitario  = 0
+  var property descripcion = ""
+}
+
+class ProductoPorPeso inherits Producto{
+  var property precioPorKilo = 0
+  var property peso = 0
+
+  method precioAAbonar(){
+    return self.precioPorKilo() * self.peso()
+  } 
+
+  override method precioUnitario(){
+    return self.precioAAbonar()
+  }
+}
+
+const aceite = new Producto(precioUnitario =60.75 , descripcion="aceite de girasol")
+
+// RED SOCIAL
+
+// info dada
+class Usuario {
+    const property contactos = #{}
+
+    method tieneContacto(unUsuario) = contactos.contains(unUsuario)
+
+    method agregarContacto(unUsuario){
+        self.contactos().add(unUsuario)
+    }
+    method eliminarContacto(unUsuario){
+        self.contactos().remove(unUsuario)
+    }
+}
+
+class Publicacion{
+  var property privada = true
+  var creador
+  var fechaPublicacion
+  
+  var property listaBlanca = []
+  var siListaBlanca = false
+
+  method fechaPublicacion(){
+    return fechaPublicacion
+  }
+
+  method creador(){
+    return creador
+  }
+
+  method volverPrivada(){
+    self.privada( true )
+  }
+
+  method volverPublica(){
+   self.privada( false )
+  }
+
+  method puedeVerla(unUsuario, fecha){
+
+    // if(self.privada() && !siListaBlanca){
+    //   return self.creador().tieneContacto(unUsuario)  || unUsuario == self.creador()
+    // } else if (siListaBlanca){
+    //   return 
+    // } else {
+    //   return
+    // }
+
+    if(siListaBlanca){
+      return ( 
+        self.creador().tieneContacto(unUsuario) && listaBlanca.contains(unUsuario) 
+        ) || unUsuario == self.creador()
+    } else {
+      if(self.privada()){
+        return self.creador().tieneContacto(unUsuario) || unUsuario == self.creador()
+      } else {
+        return true
+      }
+    }
+
+  }
+
+  method conListaBlanca(lista_usuarios){
+    listaBlanca = lista_usuarios
+    siListaBlanca = true
+  }
+
+}
+
+/*
+Necesitamos agregar la posibilidad de que una publicación o historia se cree para que sea visible sólo por ciertos
+ contactos de quien la creó, a modo de lista blanca (sólo aquellos contactos que se indiquen deberían poder ver el contenido).
+
+El objetivo es que sea más restrictivo que las publicaciones o historias privadas, con lo cual alguien que está en la
+ lista blanca para esa publicación o historia pero no es contacto del creador del contenido al momento de consultar si
+  puede o no verla, no debería poder ver dicho contenido. De esa forma se permite que alguien elimine de sus contactos
+   a otro usuario, y el contenido publicado con lista blanca que anteriormente podía ver, ya no sea visible.
+
+Las publicaciones e historias deben además entender el mensaje conListaBlanca que reciba una lista de usuarios
+ y modifique la visibilidad de forma acorde.
+
+Te dejamos en el editor tu solución del ejercicio anterior, para que puedas modificar lo que haga falta.
+
+*/
+class Historia inherits Publicacion{
+
+  override method puedeVerla(unUsuario, unafecha){
+    if(siListaBlanca){
+      return (
+        self.creador().tieneContacto(unUsuario) &&
+         self.fechaPublicacion().plusDays(1) >= unafecha && listaBlanca.contains(unUsuario)
+          ) || unUsuario == self.creador()
+    } else {
+      if(self.privada()){
+        return (self.creador().tieneContacto(unUsuario) && self.fechaPublicacion().plusDays(1) >= unafecha) || unUsuario == self.creador()
+      } else {
+        return self.fechaPublicacion().plusDays(1) >= unafecha || unUsuario == self.creador() || unUsuario != self.creador()
+      }
+    }
+
+    // if(self.privada()){
+    //   return (self.creador().tieneContacto(unUsuario) && self.fechaPublicacion().plusDays(1) >= unafecha) || unUsuario == self.creador()
+    // } else {
+    //   return self.fechaPublicacion().plusDays(1) >= unafecha || unUsuario == self.creador() || unUsuario != self.creador()
+    // }
+  }
+}
+
+const pepe = new Usuario()
+const historiaPublica = new Historia(privada = false,    creador=pepe, fechaPublicacion = new Date() )
+const publicacionPrivada = new Publicacion(privada = true , creador=pepe, fechaPublicacion = new Date() )
