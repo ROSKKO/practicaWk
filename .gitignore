@@ -1,0 +1,12 @@
+
+# Local history
+.history
+
+*.json
+
+# Wollok Log
+log
+*.log
+
+# Dependencies
+node_modules

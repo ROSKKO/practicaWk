@@ -1489,3 +1489,271 @@ class Historia inherits Publicacion{
 const pepe = new Usuario()
 const historiaPublica = new Historia(privada = false,    creador=pepe, fechaPublicacion = new Date() )
 const publicacionPrivada = new Publicacion(privada = true , creador=pepe, fechaPublicacion = new Date() )
+
+
+
+/*
+ 16/9
+
+- CLASES
+
+*/
+
+
+object pistolaDePortales{
+  method poder() = 50
+}
+
+object rick{
+  var property energia=100
+  const property arma = pistolaDePortales
+  var property poder = 200*arma.poder()
+
+  var property poderBase = 200*arma.poder()
+
+  method atacar(contrincante){
+    if(contrincante.poder() > self.poder()){
+      energia -= 50
+    } else {
+      poderBase += 10
+    }
+    contrincante.recibirDanio(poderBase)
+  } 
+
+
+}
+
+object morty {
+  var property poder = 100 * if(self.estaTraumado()) 3 else 1
+  /*
+  alternativa de poder
+
+  method poder(){
+    if(self.estaTraumado()){
+      return 300
+    }else{
+      return 100
+    }
+  }
+  */
+  var property energia = 50
+
+  method estaTraumado() = energia < 30
+
+  method atacar(contrincante){
+    energia -= 10
+  }
+}
+
+/*
+cada instancia tiene sus propias referencias, aunque los atributos
+apunten a los mismos valores
+
+Poner valores defaults en las clases cuando sea conveniente y no innecesario
+
+      7 OCTUBRE
+La flecha punteada -> Implementa una interfaz
+
+Flecha solida -> conoce a ( habla de instancias )
+
+*/
+
+
+//  14 OCTUBRE
+
+class Pirata{
+  var property monedas
+  var property ebriedad
+  var property items = []
+
+  method tieneAlgunoDe(listaObjetos){
+    // return listaObjetos.all({objeto => self.items().contains(objeto)})
+    return ! items.intersection(listaObjetos).isEmpty() // no hay un error ? no puede suceder que la lista resultante tenga solo un objeto en vez de los 3 que se pidan?
+  }
+
+  method tiene(objeto) = items.contains(objeto)
+
+  method cantidadItems()= items.size()
+
+  method seAnimaASaquear(vicitma) = vicitma.esSaqueablePor(self)
+
+  method estaPasandoGrogoXD() = true
+
+  method estaMasEbrioQue(valor) = ebriedad >= valor
+
+  method puedePagar(valor) = monedas >= valor
+
+  method escabia(precioTrago){
+    self.pagar(precioTrago)
+    ebriedad += 5
+  }
+  method pagar(precio){
+    if(not self.puedePagar(precio)){
+      self.error("no tengo guita")
+    }
+    monedas -= precio
+
+  }
+}
+
+class EspiaDeLaCorona inherits Pirata{
+  override method estaPasandoGrogoXD() = false
+}
+
+class CiudadCostera{
+  var property habitantes
+  const property precioGrogo
+  method esSaqueablePor(pirata) = pirata.estaMasEbrioQue(50)
+
+
+
+  method esVulnerable(barco) = barco.puedeCopar(self)
+  method agregarHabitante(nuevoHabitante){
+    habitantes += 1
+  }
+}
+
+class Isla inherits CiudadCostera{
+  override method esVulnerable(barco) = super(barco) or barco.estanTodosPasadosDeGrogoXD() 
+}
+
+class BarcoPirata{
+  const tripulacion = []
+  const capacidadMax 
+  var property mision
+  method esSaqueablePor(pirata) = pirata.seAnimaASaquear(self)
+
+  method puedeFormarParte(pirata) =  self.tieneLugar()
+
+  method tieneLugar() = tripulacion.size() < capacidadMax
+
+  method reclutar(pirata){
+    // if(self.tieneLugar()){
+    //   tripulacion.add(pirata)
+    // } else {
+    //   self.error("No hay lugar")
+    // }
+
+    if( not self.puedeFormarParte(pirata)){
+      self.error("No hay lugar")
+    }
+
+    tripulacion.add(pirata)
+  }
+
+  method cambiarMision(nuevaMision){
+    // tripulacion = tripulacion.filter{tripulante => }
+    tripulacion.removeAllSuchThat({pirata =>
+    not nuevaMision.esUtil(pirata)
+    })
+    mision = nuevaMision
+    
+  }
+
+  method esTemible() = self.puedeRealizarLaMision() and self.tripulantesUtilesParaMision().size() >= 5
+
+  method tripulantesUtilesParaMision()=
+    tripulacion.filter{pirata => mision.esUtil(pirata)}
+  
+
+  method puedeRealizarLaMision()= self.tieneSuficienteTripulacion() and mision.puedeSerRealizadaPor(self)
+
+  method tieneSuficienteTripulacion() = tripulacion.size() * 0.9 > capacidadMax
+
+  method alguienTiene(item){
+
+  }
+
+
+  method esVulnerable(otroBarco){
+    otroBarco.cantidadTripulantes() / 2 > tripulacion.size()
+  }
+
+  method puedeCopar(ciudad){
+    tripulacion.size() >= ciudad.habitantes() * 0.4
+  }
+
+  method estanTodosPasadosDeGrogoXD(){
+    return tripulacion.all{pirata => }
+  }
+
+  method anclaEn(lugar){
+    tripulacion.filter{pirata => pirata.puedePagar( lugar.precioGrogo() ) }
+    .forEach{pirata => pirata.escabiaUnGrogo( lugar.precioGrogo() )}
+    const pirataMasBorracho = tripulacion.max{ pirata => pirata.ebriedad() }
+    tripulacion.remove(pirataMasBorracho)
+    lugar.agregarHabitante(pirataMasBorracho)
+  }
+
+
+}
+
+class Mision{
+  method esUtilParaMision(pirata)
+  // o un metodo que diga misionEsUtil(pirata)
+
+  method puedeSerRealizadaPor(barco) = barco.alguienTiene("item")
+}
+
+class BusquedaDeTesoro inherits Mision{
+  method misionEsUtil(pirata){
+    // return (pirata.items().contains(brujula) || pirata.items().contains(mapa) || pirata.items().contains(botella)) && pirata.monedas() < 5 
+    return pirata.tieneAlgunoDe(["brujula","mapa","botella"]) && pirata.monedas() <= 5
+  }
+
+  method sePuedeRealizarCon(barco){
+    return 
+  }
+}
+
+class ConvertirseEnLeyenda{
+  const itemObligatorio
+  method esUtil(pirata){
+    return pirata.cantidadDeItems() <= 10 && pirata.tiene(itemObligatorio)
+  }
+}
+
+
+class Saqueo{
+  const victima
+  const monedasRequeridas
+
+  method esUtil(pirata){
+    return pirata.monedas() < monedasRequeridas && pirata.seAnimaASaquear(victima)
+  }
+}
+
+
+
+class Victima{
+
+}
+
+/*
+el sistema -
+se debe cumplir el requerimiento -> saber si un pirata puede formar parte de la tripulacion de un barco
+                                  -> si un pirata es util para una mision
+Hay que saber quien debe tener la responsabilidad de que
+Como la mision tiene la responsabilidad de saber si un pirata es util para la mision o no
+
+
+en examen los primeros 2 o 3 ejercicio son los mas largos
+en el examen lanzar error exception cuando se deba
+
+
+el metodo LOOKUP
+*/
+
+object anotacion{
+  method prueba(){
+    // try{
+    //   return
+    // }catch (exception DomainException){
+    //   return
+    // }
+
+    // if(algo){
+    //   throw new DomainException(message="No te podes subir")
+    // }
+  }
+}
