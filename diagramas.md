@@ -1,8 +1,4 @@
 ``` mermaid
-
----
-title:algo
----
 classDiagram
 
 class Jugador{
